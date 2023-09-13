@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Card, Button } from "react-bootstrap";
 
 export function Content() {
   const [plants, setPlants] = useState([]);
@@ -25,7 +28,7 @@ export function Content() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      axios.get("http://localhost:3000/schedules").then((response) => {
+      axios.get("http://localhost:3000/schedules/").then((response) => {
         setSchedules(response.data);
       });
     }
@@ -53,35 +56,47 @@ export function Content() {
       {isLoggedIn ? (
         <>
           {plants.map((plant, index) => (
-            <div key={index}>
-              <h2>{plant.name}</h2>
-              <p>{plant.description}</p>
-              <p>Amount of Sun: {plant.amount_of_sun}</p>
-              <p>Days to Water: {plant.days_to_water}</p>
-            </div>
+            <Card key={index} style={{ width: "18rem" }}>
+              <Card.Body>
+                <Card.Title>{plant.name}</Card.Title>
+                <Card.Text>
+                  {plant.description}
+                  {`\nAmount of Sun: ${plant.amount_of_sun}`}
+                  {`\nDays to Water: ${plant.days_to_water}`}
+                </Card.Text>
+                <Button variant="primary">Go somewhere</Button>
+              </Card.Body>
+            </Card>
           ))}
           {schedules.map((schedule, index) => (
-            <div key={index}>
-              <h2>{schedule.plant_name}</h2>
-              <p>Watering Start Date: {schedule.watering_start_date}</p>
-            </div>
+            <Card key={index} style={{ width: "18rem" }}>
+              <Card.Body>
+                <Card.Title>{schedule.plant_name}</Card.Title>
+                <Card.Text>Watering Start Date: {schedule.watering_start_date}</Card.Text>
+                <Button variant="primary">Go somewhere</Button>
+              </Card.Body>
+            </Card>
           ))}
           <form onSubmit={handleSubmit}>
-            <label>
-              Select a plant:
-              <select value={selectedPlant} onChange={handlePlantChange}>
-                {plants.map((plant, index) => (
-                  <option key={index} value={plant.id}>
-                    {plant.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Set a watering start date:
-              <input type="date" value={wateringStartDate} onChange={handleDateChange} />
-            </label>
-            <input type="submit" value="Save" />
+            <div className="form-group">
+              <label>
+                Select a plant:
+                <select className="form-control" value={selectedPlant} onChange={handlePlantChange}>
+                  {plants.map((plant, index) => (
+                    <option key={index} value={plant.id}>
+                      {plant.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="form-group">
+              <label>
+                Set a watering start date:
+                <input type="date" className="form-control" value={wateringStartDate} onChange={handleDateChange} />
+              </label>
+            </div>
+            <input type="submit" className="btn btn-primary" value="Save" />
           </form>
         </>
       ) : (
