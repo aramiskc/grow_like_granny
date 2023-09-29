@@ -10,6 +10,7 @@ export function Content() {
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [wateringStartDate, setWateringStartDate] = useState(null);
   const [schedules, setSchedules] = useState([]);
+  const [species, setSpecies] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -33,6 +34,17 @@ export function Content() {
       });
     }
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    axios
+      .get("https://perenual.com/api/species-list?key=sk-s0Xm64ff46adb034b2130")
+      .then((response) => {
+        setSpecies(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
+  }, []);
 
   const handlePlantChange = (event) => {
     setSelectedPlant(event.target.value);
@@ -73,6 +85,15 @@ export function Content() {
               <Card.Body>
                 <Card.Title>{schedule.plant_name}</Card.Title>
                 <Card.Text>Watering Start Date: {schedule.watering_start_date}</Card.Text>
+                <Button variant="primary">Go somewhere</Button>
+              </Card.Body>
+            </Card>
+          ))}
+          {species.map((speciesItem, index) => (
+            <Card key={index} style={{ width: "18rem" }}>
+              <Card.Body>
+                <Card.Title>{speciesItem.name}</Card.Title>
+                <Card.Text>{speciesItem.description}</Card.Text>
                 <Button variant="primary">Go somewhere</Button>
               </Card.Body>
             </Card>
